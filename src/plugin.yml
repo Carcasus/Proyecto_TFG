@@ -1,0 +1,5 @@
+name: Villager_Errands
+author:  Ruben Porras y David Gomez
+version: 1.0
+api-version: 1.18
+main: com.RubenDavid.proyectoTFG.Main
