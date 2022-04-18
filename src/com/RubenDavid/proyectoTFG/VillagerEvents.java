@@ -1,11 +1,10 @@
 package com.RubenDavid.proyectoTFG;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -19,6 +18,12 @@ import java.util.Random;
 
 public class VillagerEvents implements Listener {
 
+    static MisionAsignada misionAsignada; //Guardamos como atributo statico la mision asignada, para poder manipularlo en los distintos eventos
+
+
+    //GENERAR UN ARRAY DE MISIONES ASIGNADAS PARA PODER BORRAR UNA MISION POR UUID DEL JUGADOR, PARA PODER TENER VARIAS MISIONESASIGNADAS ACTIVAS A LA VEZ
+
+
     @EventHandler
     public void CrearMisiones(PlayerInteractAtEntityEvent event) {
 
@@ -26,23 +31,34 @@ public class VillagerEvents implements Listener {
         if (!(villager instanceof Villager)) { //Si no hacemos click sobre un villager, salimos del metodo
             return;
         }
-        if (event.getPlayer().isSneaking()) { //Si estamos agachados, salimos del metodo actual (saltamos directamente al eventHandler de cancelacion)
+        if (event.getPlayer().isSneaking()) { //Si estamos agachados, salimos del metodo
             return;
         }
 
-        int rnd = new Random().nextInt(4); //Se hace un random del 0 al 3, que sera la id de la mision
-        MisionPlantilla misionAleatoria = DatosCompartidos.plantillas.get(rnd);
-        //Asignamos la mision aleatoria elegida al Arraylist de mision asignada, para mantenerla trakeada.
-        MisionAsignada misionAsignada = new MisionAsignada(misionAleatoria.id, misionAleatoria.descripcion, misionAleatoria.material,
-                misionAleatoria.criatura, misionAleatoria.cantidadTotal, event.getPlayer().getUniqueId(),
-                event.getRightClicked().getUniqueId());
+        if (misionAsignada == null || misionAsignada.getId() != 3){
+            int rnd = new Random().nextInt(4); //Se hace un random del 0 al 3, que sera la id de la mision
+            MisionPlantilla misionAleatoria = DatosCompartidos.plantillas.get(rnd);
+            //Asignamos la mision aleatoria elegida al Arraylist de mision asignada, para mantenerla trakeada.
+            misionAsignada = new MisionAsignada(misionAleatoria.getId(), misionAleatoria.getDescripcion(), misionAleatoria.getMaterial(),
+                    misionAleatoria.getCriatura(), misionAleatoria.getCantidadTotal(), event.getPlayer().getUniqueId(),
+                    event.getRightClicked().getUniqueId());
 
-        DatosCompartidos.misionesAsignadas.add(misionAsignada);
-        event.getPlayer().sendMessage(misionAsignada.descripcion);
+            DatosCompartidos.misionesAsignadas.add(misionAsignada);
+            event.getPlayer().sendMessage(misionAsignada.getDescripcion());
 
-        World world = villager.getWorld(); //Guardamos la ubicacion en el mundo de el aldeano (coordenadas)
-        //world.spawnParticle(Particle.GLOW, villager.getLocation().add(0, 0.5, 0), 50, 0.1, 0.1, 0.1, 0.1); //Spawneamos una particula sobre el aldeano
-        villager.setGlowing(true);
+            World world = villager.getWorld(); //Guardamos la ubicacion en el mundo de el aldeano (coordenadas)
+            //world.spawnParticle(Particle.GLOW, villager.getLocation().add(0, 0.5, 0), 50, 0.1, 0.1, 0.1, 0.1); //Spawneamos una particula sobre el aldeano
+            //villager.setGlowing(true);
+            Bukkit.broadcastMessage("Ultima mision asignada: " + misionAsignada.getId());
+        }
+
+        //Generar una recompensa
+        if (misionAsignada.getCantidadActual() == misionAsignada.getCantidadTotal()){
+            event.getPlayer().sendMessage("Muchas gracias, " + event.getPlayer().getDisplayName() + ", aqui esta tu recompensa ");
+            villager.getWorld().dropItemNaturally(villager.getLocation(), new ItemStack(Material.STICK, 1));
+
+            misionAsignada = null;
+        }
     }
 
     @EventHandler
@@ -57,18 +73,48 @@ public class VillagerEvents implements Listener {
 
     @EventHandler
     public void RecogerObjeto(InventoryPickupItemEvent event) {
-        //(Necesario revisar la clase del inventario)
         //Controlador de que estamos recogiendo el objeto correcto
-        //Controlador de que aun no hemos llegado a la cantidad total requerida
 
-
-        //Generar una recompensa
-        //villager.getWorld().dropItemNaturally(villager.getLocation(), new ItemStack(Material.STICK, 1));
+        switch (misionAsignada.getId()){
+            case 0: //Recoger margaritas
+                //event.getItem().getItemStack().getType(Material.OXEYE_DAISY);
+                break;
+            case 1: //Talar un arbol
+                //event.getItem().getItemStack().getType(Material.OAK_LOG);
+                break;
+            case 2: //Fabricar mesa de trabajo
+                break;
+        }
     }
 
     @EventHandler
     public void MatarCriatura(EntityDeathEvent event) {
+        Bukkit.broadcastMessage("Mision asignada actual: " + misionAsignada.getId());
+        switch (misionAsignada.getId()){
+            case 3:
 
+                Chicken chicken = (Chicken) event.getEntity();
+                Player asesino = chicken.getKiller();
+
+                //Verificamos que la gallina muere a manos de un jugador y no por elementos externos
+                if (asesino == null) {
+                    return;
+                }
+
+                //Cada vez que el jugador mata una gallina, se aumenta en uno la cantidad actual, hasta llegar a la cantidad total
+                if (misionAsignada.getCantidadActual() != misionAsignada.getCantidadTotal()){
+                    misionAsignada.setCantidadActual(misionAsignada.getCantidadActual()+1);
+                    chicken.getKiller().sendMessage("Pollos " + misionAsignada.getCantidadActual() +"/"+ misionAsignada.getCantidadTotal());
+                }
+
+                //Si la cantidad es identica, sale un mensaje de mision completada
+                if (misionAsignada.getCantidadActual() == misionAsignada.getCantidadTotal()){
+                    event.getEntity().getKiller().sendMessage("Mision Completada, debo regresar a por mi recompensa");
+                }
+                break;
+            case 4:
+                break;
+        }
     }
 
 

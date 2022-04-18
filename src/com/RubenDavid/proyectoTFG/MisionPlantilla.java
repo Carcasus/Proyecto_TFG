@@ -5,11 +5,11 @@ import org.bukkit.entity.EntityType;
 
 public class MisionPlantilla {
 
-    int id;
-    String descripcion;
-    Material material;
-    EntityType criatura;
-    int cantidadTotal;
+    private int id;
+    private String descripcion;
+    private Material material;
+    private EntityType criatura;
+    private int cantidadTotal;
 
     public MisionPlantilla(int id, String descripcion, Material material, EntityType criatura, int cantidadTotal) {
         this.id = id;

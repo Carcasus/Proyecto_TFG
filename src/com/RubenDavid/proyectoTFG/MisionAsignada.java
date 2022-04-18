@@ -8,13 +8,16 @@ import java.util.UUID;
 
 public class MisionAsignada extends MisionPlantilla {
 
-    UUID player;
-    UUID villager;
+    private UUID player;
+    private UUID villager;
+    private int cantidadActual;
 
     public MisionAsignada(int id, String descripcion, Material material, EntityType criatura, int cantidadTotal, UUID player, UUID villager) {
         super(id, descripcion, material, criatura, cantidadTotal);
+        this.cantidadActual = 0;
         this.player = player;
         this.villager = villager;
+
     }
 
     public UUID getPlayer() {
@@ -31,5 +34,13 @@ public class MisionAsignada extends MisionPlantilla {
 
     public void setVillager(UUID villager) {
         this.villager = villager;
+    }
+
+    public int getCantidadActual() {
+        return cantidadActual;
+    }
+
+    public void setCantidadActual(int cantidadActual) {
+        this.cantidadActual = cantidadActual;
     }
 }
