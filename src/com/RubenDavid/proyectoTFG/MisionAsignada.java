@@ -10,14 +10,16 @@ public class MisionAsignada extends MisionPlantilla {
 
     private UUID player;
     private UUID villager;
+    private String nombreVillager;
     private int cantidadActual;
 
-    public MisionAsignada(int id, String descripcion, Material material, EntityType criatura, int cantidadTotal, UUID player, UUID villager) {
+
+    public MisionAsignada(int id, String descripcion, Material material, EntityType criatura, int cantidadTotal, UUID player, UUID villager, String nombreVillager) {
         super(id, descripcion, material, criatura, cantidadTotal);
         this.cantidadActual = 0;
         this.player = player;
         this.villager = villager;
-
+        this.nombreVillager = nombreVillager;
     }
 
     public UUID getPlayer() {
@@ -34,6 +36,14 @@ public class MisionAsignada extends MisionPlantilla {
 
     public void setVillager(UUID villager) {
         this.villager = villager;
+    }
+
+    public String getNombreVillager() {
+        return nombreVillager;
+    }
+
+    public void setNombreVillager(String nombreVillager) {
+        this.nombreVillager = nombreVillager;
     }
 
     public int getCantidadActual() {
