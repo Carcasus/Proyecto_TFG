@@ -2,17 +2,18 @@ package com.RubenDavid.proyectoTFG;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Random;
@@ -36,7 +37,7 @@ public class VillagerEvents implements Listener {
             return;
         }
 
-        if (misionAsignada == null || misionAsignada.getId() != 3){
+        if (misionAsignada == null){
             int rnd = new Random().nextInt(4); //Se hace un random del 0 al 3, que sera la id de la mision
             MisionPlantilla misionAleatoria = DatosCompartidos.plantillas.get(rnd);
             //Asignamos la mision aleatoria elegida al Arraylist de mision asignada, para mantenerla trakeada.
@@ -76,17 +77,58 @@ public class VillagerEvents implements Listener {
     }
 
     @EventHandler
-    public void RecogerObjeto(InventoryPickupItemEvent event) {
+    public void RecogerObjeto(EntityPickupItemEvent event) {
         //Controlador de que estamos recogiendo el objeto correcto
+        if(event.getEntity() instanceof Player) {
+        Player player = (Player) event.getEntity();
+
+            switch (misionAsignada.getId()) {
+                case 0: //Recoger margaritas
+                    if (event.getItem().getItemStack().getType() == Material.OXEYE_DAISY) {
+                        if (misionAsignada.getCantidadActual() != misionAsignada.getCantidadTotal()) {
+                            misionAsignada.setCantidadActual(misionAsignada.getCantidadActual() + 1);
+                            player.sendMessage("Margaritas " + misionAsignada.getCantidadActual() +"/"+ misionAsignada.getCantidadTotal());
+                        }
+                        //Si la cantidad es identica, sale un mensaje de mision completada
+                        if (misionAsignada.getCantidadActual() == misionAsignada.getCantidadTotal()){
+                            player.sendMessage("Mision Completada, debo regresar a por mi recompensa, me la entregara "+ misionAsignada.getNombreVillager());
+                        }
+                    }
+                    break;
+                case 1: //Talar un arbol
+                    if (event.getItem().getItemStack().getType() == Material.OAK_LOG) {
+                        if (misionAsignada.getCantidadActual() != misionAsignada.getCantidadTotal()) {
+                            misionAsignada.setCantidadActual(misionAsignada.getCantidadActual() + 1);
+                            player.sendMessage("Madera " + misionAsignada.getCantidadActual() +"/"+ misionAsignada.getCantidadTotal());
+                        }
+                        //Si la cantidad es identica, sale un mensaje de mision completada
+                        if (misionAsignada.getCantidadActual() == misionAsignada.getCantidadTotal()){
+                            player.sendMessage("Mision Completada, debo regresar a por mi recompensa, me la entregara "+ misionAsignada.getNombreVillager());
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+
+    @EventHandler
+    public void FabricarObjetos(CraftItemEvent event){
+        Player player = (Player) event.getWhoClicked(); //Guardamos al jugador que ha hecho click sobre la mesa de trabajo
+
+        CraftingInventory inv = (CraftingInventory) event.getInventory();
 
         switch (misionAsignada.getId()){
-            case 0: //Recoger margaritas
-                //event.getItem().getItemStack().getType(Material.OXEYE_DAISY);
-                break;
-            case 1: //Talar un arbol
-                //event.getItem().getItemStack().getType(Material.OAK_LOG);
-                break;
             case 2: //Fabricar mesa de trabajo
+                if (inv.contains(Material.CRAFTING_TABLE)) { //Si el resultado del crafteo es una mesa de Trabajo
+                    if (misionAsignada.getCantidadActual() != misionAsignada.getCantidadTotal()) {
+                        misionAsignada.setCantidadActual(misionAsignada.getCantidadActual() + 1);
+                        player.sendMessage("Mesa de trabajo " + misionAsignada.getCantidadActual() +"/"+ misionAsignada.getCantidadTotal());
+                    }
+                    //Si la cantidad es identica, sale un mensaje de mision completada
+                    if (misionAsignada.getCantidadActual() == misionAsignada.getCantidadTotal()){
+                        player.sendMessage("Mision Completada, debo regresar a por mi recompensa, me la entregara "+ misionAsignada.getNombreVillager());
+                    }
+                }
                 break;
         }
     }
@@ -115,8 +157,6 @@ public class VillagerEvents implements Listener {
                 if (misionAsignada.getCantidadActual() == misionAsignada.getCantidadTotal()){
                     event.getEntity().getKiller().sendMessage("Mision Completada, debo regresar a por mi recompensa, me la entregara "+ misionAsignada.getNombreVillager());
                 }
-                break;
-            case 4:
                 break;
         }
     }
@@ -159,6 +199,4 @@ public class VillagerEvents implements Listener {
             villager.setCustomNameVisible(true);
         }
     }
-
-
 }
