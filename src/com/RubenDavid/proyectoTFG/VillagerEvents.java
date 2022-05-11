@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Random;
 
@@ -59,6 +60,11 @@ public class VillagerEvents implements Listener {
             //Si el aldeano clickado y el aldeano de la mision son el mismo, damos la recompensa y liberamos la opcion de coger una nueva mision
             if (event.getRightClicked().getUniqueId() == misionAsignada.getVillager()){
                 event.getPlayer().sendMessage("Muchas gracias, " + event.getPlayer().getDisplayName() + ", aqui esta tu recompensa ");
+
+                //(BORRAR OBJETOS) Creamos un itemstack con los datos del tipo de objeto y la cantidad requerida por la mision, para luego eliminarlo del inventario
+                ItemStack objetoMisionAEliminar = new ItemStack(misionAsignada.getMaterial(), misionAsignada.getCantidadTotal());
+                event.getPlayer().getInventory().removeItem(objetoMisionAEliminar);
+
                 villager.getWorld().dropItemNaturally(villager.getLocation(), new ItemStack(Material.STICK, 1));
                 villager.setGlowing(false);
                 misionAsignada = null;
@@ -161,40 +167,28 @@ public class VillagerEvents implements Listener {
         }
     }
 
-    //Si aparece un aldeano, lo hara con un nombre (NameTag) sobre su cabeza, para poder identificarlo, el nombre sera unico.
-    //Para este proceso desarrollamos un StringBuilder para seleccionar de forma aleatoria caracteres para el nombre cada vez que aparece un aldeano nuevo
+    //Si aparece un aldeano, lo hara con un nombre (NameTag) sobre su cabeza, para poder identificarlo.
+    //Para este proceso usaremos dos Strings con nombres y apellidos, que juntaremos luego en el nombre
     @EventHandler
     public void PuestaDeNombres(EntitySpawnEvent event){
         if (event.getEntity() instanceof Villager){
-            //Herramientas que usaremos para poner los nombres
-            String letrasMayusculas = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
-            String letrasMinusculas = "abcdefghijklmnñopqrstuvwxyz";
-            String[] apellidos={"Gómez", "Porras", "Castro", "Garcia", "Tajuelo", "López"};
-            StringBuilder sb = new StringBuilder();
-            Random random = new Random();
-            char letraAleatoria;
-            int longitudNombre = 7;
+
+            String[] nombres = {"Ruben", "David", "Ismael", "Roberto", "Alejandro", "Daniel", "Fran", "Manuel", "Miguel"};
+            String[] apellidos={"Gómez", "Porras", "Castro", "Garcia", "Tajuelo", "López", "Arellano", "Anso", "Fernandez", "Pires", "Garcia"};
 
             //A la creacion de un aldeano, identificamos a dicho aldeano y le aplicamos un nombre.
             Villager villager =(Villager)event.getEntity();
 
-            for (int i = 0; i <longitudNombre; i++){
-                if (i == 0){ //Letra Mayuscula inicial del Nombre
-                    int primeraLetra = random.nextInt(letrasMayusculas.length());
-                    letraAleatoria = letrasMayusculas.charAt(primeraLetra);
-                    sb.append(letraAleatoria);
-                } //Resto de letras
-                int restoLetras = random.nextInt(letrasMinusculas.length());
-                letraAleatoria = letrasMinusculas.charAt(restoLetras);
-                sb.append(letraAleatoria);
-            }
+            //Seleccionaremos ahora uno de los nombres guardados en el Array
+            int nombreRandom = new Random().nextInt(nombres.length);
+            String nombre = nombres[nombreRandom]; //Seleccionamos uno de los nombres
 
-            //Seleccionaremos ahora uno de los apellidos guardados en el Array
+            //Y hacemos lo mismo con los apellidos
             int apellidoRandom = new Random().nextInt(apellidos.length);
-            String apellido = apellidos[apellidoRandom]; //Seleccionamos uno de los apellidos
+            String apellido = apellidos[apellidoRandom];
 
-            //Una vez formada la string, se la aplicaremos al aldeano y haremos visible su nombre, añadimos tambien el apellido de la lista Array
-            String nombreAldeano = sb.toString() + " " + apellido;
+            //Una vez formado el nombre y el apellido, se la aplicaremos al aldeano y haremos visible su nombre
+            String nombreAldeano = nombre + " " + apellido;
             villager.setCustomName(nombreAldeano);
             villager.setCustomNameVisible(true);
         }
