@@ -7,13 +7,15 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
+import java.sql.Connection;
+
 
 public class Main extends JavaPlugin implements Listener {
 
-
+    private ConexionMySQL conexion;
 
     @Override
     public void onEnable() {
@@ -28,7 +30,28 @@ public class Main extends JavaPlugin implements Listener {
 
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new VillagerEvents(), this);
+
+        registerCommands();
+        registerEvents();
+        this.conexion = new ConexionMySQL("localhost",3306,"mipluginsql","root","");
     }
+
+
+
+    public void registerCommands(){
+    this.getCommand("mision").setExecutor(new Comando(this));
+    }
+    public void registerEvents(){
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new PlayerListener(this),this);
+    }
+
+    public Connection getMySQL(){
+        return this.conexion.getConnection();
+    }
+
+
+
 
     @Override
     public void onLoad() {

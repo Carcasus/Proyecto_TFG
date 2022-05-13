@@ -3,3 +3,6 @@ author:  Ruben Porras y David Gomez
 version: 1.0
 api-version: 1.18
 main: com.RubenDavid.proyectoTFG.Main
+comands:
+  mision:
+    descripcion: Comando que nos dice que mision tenemos activa
