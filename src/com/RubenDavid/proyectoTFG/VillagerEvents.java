@@ -52,7 +52,8 @@ public class VillagerEvents implements Listener {
             World world = villager.getWorld(); //Guardamos la ubicacion en el mundo de el aldeano (coordenadas)
             villager.setGlowing(true);
 
-            Bukkit.broadcastMessage("Ultima mision asignada: " + misionAsignada.getId() + ".\n La mision fue asignada por "+ misionAsignada.getNombreVillager());
+            event.getPlayer().sendMessage("Ultima mision asignada: " + misionAsignada.getId() + ".");
+
         }
 
         //Generar una recompensa
@@ -61,10 +62,11 @@ public class VillagerEvents implements Listener {
             if (event.getRightClicked().getUniqueId() == misionAsignada.getVillager()){
                 event.getPlayer().sendMessage("Muchas gracias, " + event.getPlayer().getDisplayName() + ", aqui esta tu recompensa ");
 
-                //(BORRAR OBJETOS) Creamos un itemstack con los datos del tipo de objeto y la cantidad requerida por la mision, para luego eliminarlo del inventario
-                ItemStack objetoMisionAEliminar = new ItemStack(misionAsignada.getMaterial(), misionAsignada.getCantidadTotal());
-                event.getPlayer().getInventory().removeItem(objetoMisionAEliminar);
-
+                if (misionAsignada.getId() != 3){
+                    //(BORRAR OBJETOS) Creamos un itemstack con los datos del tipo de objeto y la cantidad requerida por la mision, para luego eliminarlo del inventario
+                    ItemStack objetoMisionAEliminar = new ItemStack(misionAsignada.getMaterial(), misionAsignada.getCantidadTotal());
+                    event.getPlayer().getInventory().removeItem(objetoMisionAEliminar);
+                }
                 villager.getWorld().dropItemNaturally(villager.getLocation(), new ItemStack(Material.STICK, 1));
                 villager.setGlowing(false);
                 misionAsignada = null;
@@ -141,7 +143,8 @@ public class VillagerEvents implements Listener {
 
     @EventHandler
     public void MatarCriatura(EntityDeathEvent event) {
-        Bukkit.broadcastMessage("Mision asignada actual: " + misionAsignada.getId());
+        Bukkit.broadcastMessage("Mision asignada actual: " + misionAsignada.getDescripcion());
+        Bukkit.broadcastMessage("La mision fue asignada por "+ misionAsignada.getNombreVillager());
         switch (misionAsignada.getId()){
             case 3:
 
