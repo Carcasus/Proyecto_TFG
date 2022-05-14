@@ -22,6 +22,10 @@ public class MisionAsignada extends MisionPlantilla {
         this.nombreVillager = nombreVillager;
     }
 
+    public MisionAsignada() {
+
+    }
+
     public UUID getPlayer() {
         return player;
     }

@@ -19,6 +19,10 @@ public class MisionPlantilla {
         this.cantidadTotal = cantidadTotal;
     }
 
+    public MisionPlantilla() {
+
+    }
+
     public int getId() {
         return id;
     }

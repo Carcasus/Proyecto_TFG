@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.sql.Connection;
 import java.util.Random;
 
 public class VillagerEvents implements Listener {
@@ -25,6 +26,11 @@ public class VillagerEvents implements Listener {
 
     //GENERAR UN ARRAY DE MISIONES ASIGNADAS PARA PODER BORRAR UNA MISION POR UUID DEL JUGADOR, PARA PODER TENER VARIAS MISIONESASIGNADAS ACTIVAS A LA VEZ
 
+    private ConexionMySQL conexion;
+
+    public VillagerEvents(ConexionMySQL conexion) {
+        this.conexion = conexion;
+    }
 
     @EventHandler
     public void CrearMisiones(PlayerInteractAtEntityEvent event) {
@@ -48,11 +54,12 @@ public class VillagerEvents implements Listener {
             DatosCompartidos.misionesAsignadas.add(misionAsignada);
             event.getPlayer().sendMessage(misionAsignada.getDescripcion());
 
+            SQLPlayerData.crearMisionAsignada(conexion.getConnection(), event.getPlayer().getName(), misionAsignada);
+
             World world = villager.getWorld(); //Guardamos la ubicacion en el mundo de el aldeano (coordenadas)
             villager.setGlowing(true);
 
             event.getPlayer().sendMessage("Ultima mision asignada: " + misionAsignada.getId() + ".");
-
         }
 
         //Generar una recompensa
@@ -146,7 +153,6 @@ public class VillagerEvents implements Listener {
         Bukkit.broadcastMessage("La mision fue asignada por "+ misionAsignada.getNombreVillager());
         switch (misionAsignada.getId()){
             case 3:
-
                 Chicken chicken = (Chicken) event.getEntity();
                 Player asesino = chicken.getKiller();
 

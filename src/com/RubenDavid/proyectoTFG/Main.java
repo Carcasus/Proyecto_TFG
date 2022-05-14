@@ -4,10 +4,10 @@ package com.RubenDavid.proyectoTFG;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
@@ -27,13 +27,13 @@ public class Main extends JavaPlugin implements Listener {
         DatosCompartidos.plantillas.add(new MisionPlantilla(2, "Necesitamos mas artesanos, fabrica una mesa de trabajo", Material.CRAFTING_TABLE, null, 1));
         DatosCompartidos.plantillas.add(new MisionPlantilla(3, "Necesitamos alimento, sacrifica a un pollo", null, EntityType.CHICKEN, 1));
 
+        this.conexion = new ConexionMySQL("localhost",3306,"villagererrandsdb","root","");
 
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new VillagerEvents(), this);
+        getServer().getPluginManager().registerEvents(new VillagerEvents(conexion), this);
 
         //registerCommands();
-        registerEvents();
-        this.conexion = new ConexionMySQL("localhost",3306,"villagererrandsdb","root","");
+
     }
 
 
@@ -41,11 +41,6 @@ public class Main extends JavaPlugin implements Listener {
     /*public void registerCommands(){
     this.getCommand("mision").setExecutor(new Comando(this));
     }*/
-
-    public void registerEvents(){
-        PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new PlayerListener(this),this);
-    }
 
     public Connection getMySQL(){
         return this.conexion.getConnection();
@@ -61,7 +56,11 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
+        Player jugador = event.getPlayer();
         Bukkit.broadcastMessage("Hola " + event.getPlayer().getDisplayName());
+        if(!SQLPlayerData.jugadorExiste(getMySQL(),jugador.getUniqueId())) {
+            SQLPlayerData.crearJugador(getMySQL(), jugador.getUniqueId(), jugador.getName());
+        }
     }
 
     /*
