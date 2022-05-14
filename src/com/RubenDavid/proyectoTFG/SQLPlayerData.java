@@ -1,5 +1,8 @@
 package com.RubenDavid.proyectoTFG;
 
+import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,7 +13,7 @@ public class SQLPlayerData {
 
     public static boolean jugadorExiste(Connection connection, UUID uuid) {
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Jugador WHERE (UUID=?)");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM jugador WHERE (uuid=?)");
             statement.setString(1, uuid.toString());
             ResultSet resultado = statement.executeQuery();
 
@@ -25,7 +28,7 @@ public class SQLPlayerData {
     public static void crearJugador(Connection connection, UUID uuid, String nombre) {
         try {
             if (!jugadorExiste(connection,uuid)) {
-                PreparedStatement statement = connection.prepareStatement("INSERT INTO Jugador VALUE (?,?,?)");
+                PreparedStatement statement = connection.prepareStatement("INSERT INTO jugador VALUE (?,?,?)");
                 statement.setString(1, uuid.toString());
                 statement.setString(2, nombre);
                 statement.setInt(3, 0); //Mision
@@ -37,7 +40,7 @@ public class SQLPlayerData {
 
     public static int getMision(Connection connection, UUID uuid) {
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Jugador WHERE (UUID=?)");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM jugador WHERE (uuid=?)");
             statement.setString(1, uuid.toString());
             ResultSet resultado = statement.executeQuery();
 
@@ -49,15 +52,23 @@ public class SQLPlayerData {
         return 0;
     }
 
-    public static void setMision(Connection connection, UUID uuid, int mision) {
+    /*public static void setMision(Connection connection, UUID uuid, int mision) {
+        int id = MisionPlantilla.class.getI;
+        String descripcion;
+        Material material;
+        EntityType criatura;
+        int cantidadTotal;
+
+        MisionPlantilla misionPlantilla = new MisionPlantilla(id, descripcion, )
+        MisionAsignada misionAsignada = new MisionAsignada(uuid,  );
         try {
-            PreparedStatement statement = connection.prepareStatement("UPDATE Jugador SET Mision=? WHERE (UUID=?)");
-            statement.setInt(1, mision);
+            PreparedStatement statement = connection.prepareStatement("UPDATE jugador SET mision=? WHERE (uuid=?)");
+            statement.setInt(, mision);
             statement.setString(1, uuid.toString());
             statement.executeQuery();
 
         } catch (SQLException e){}
-    }
+    }*/
 
 
 

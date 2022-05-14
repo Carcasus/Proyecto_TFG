@@ -31,16 +31,17 @@ public class Main extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new VillagerEvents(), this);
 
-        registerCommands();
+        //registerCommands();
         registerEvents();
-        this.conexion = new ConexionMySQL("localhost",3306,"mipluginsql","root","");
+        this.conexion = new ConexionMySQL("localhost",3306,"villagererrandsdb","root","");
     }
 
 
 
-    public void registerCommands(){
+    /*public void registerCommands(){
     this.getCommand("mision").setExecutor(new Comando(this));
-    }
+    }*/
+
     public void registerEvents(){
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PlayerListener(this),this);

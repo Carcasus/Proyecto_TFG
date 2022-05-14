@@ -25,13 +25,14 @@ public class ConexionMySQL {
 
         try{
             synchronized (this){
-                if (connection != null && !connection.isClosed()){
-                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&',"&4[&cMiPluginSQL&4]&c Error al conectar con MySQL"));
-                    return;
-                }
                 Class.forName("com.mysql.jdbc.Driver");
                 this.connection = DriverManager.getConnection("jdbc:mysql://"+this.host+":"+this.puerto+"/"+this.database,this.usuario,this.contrasena);
-                Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&',"&4[&cMiPluginSQL&4]&a Conectado con MySQL"));
+
+                if (connection != null && !connection.isClosed()){
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&',"&4[&cMiPluginSQL&4]&a Conectado con MySQL"));
+                } else{
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&4[&cMiPluginSQL&4]&c Error al conectar con MySQL"));
+                }
             }
         }catch(SQLException e){
         }catch(ClassNotFoundException e){
