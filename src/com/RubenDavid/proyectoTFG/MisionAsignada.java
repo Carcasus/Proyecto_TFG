@@ -14,17 +14,14 @@ public class MisionAsignada extends MisionPlantilla {
     private int cantidadActual;
 
 
-    public MisionAsignada(int id, String descripcion, Material material, EntityType criatura, int cantidadTotal, UUID player, UUID villager, String nombreVillager) {
-        super(id, descripcion, material, criatura, cantidadTotal);
+    public MisionAsignada(MisionPlantilla misionPlantilla, UUID player, UUID villager, String nombreVillager) {
+        super(misionPlantilla.getId(), misionPlantilla.getDescripcion(), misionPlantilla.getMaterial(), misionPlantilla.getCriatura(), misionPlantilla.getCantidadTotal());
         this.cantidadActual = 0;
         this.player = player;
         this.villager = villager;
         this.nombreVillager = nombreVillager;
     }
 
-    public MisionAsignada() {
-
-    }
 
     public UUID getPlayer() {
         return player;

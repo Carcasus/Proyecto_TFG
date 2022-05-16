@@ -46,14 +46,6 @@ public class Main extends JavaPlugin implements Listener {
         return this.conexion.getConnection();
     }
 
-
-
-
-    @Override
-    public void onLoad() {
-        super.onLoad();
-    }
-
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
         Player jugador = event.getPlayer();

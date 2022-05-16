@@ -47,8 +47,7 @@ public class VillagerEvents implements Listener {
             int rnd = new Random().nextInt(4); //Se hace un random del 0 al 3, que sera la id de la mision
             MisionPlantilla misionAleatoria = DatosCompartidos.plantillas.get(rnd);
             //Asignamos la mision aleatoria elegida al Arraylist de mision asignada, para mantenerla trakeada.
-            misionAsignada = new MisionAsignada(misionAleatoria.getId(), misionAleatoria.getDescripcion(), misionAleatoria.getMaterial(),
-                    misionAleatoria.getCriatura(), misionAleatoria.getCantidadTotal(), event.getPlayer().getUniqueId(),
+            misionAsignada = new MisionAsignada(misionAleatoria, event.getPlayer().getUniqueId(),
                     event.getRightClicked().getUniqueId(), event.getRightClicked().getCustomName());
 
             DatosCompartidos.misionesAsignadas.add(misionAsignada);
@@ -73,7 +72,6 @@ public class VillagerEvents implements Listener {
                     ItemStack objetoMisionAEliminar = new ItemStack(misionAsignada.getMaterial(), misionAsignada.getCantidadTotal());
                     event.getPlayer().getInventory().removeItem(objetoMisionAEliminar);
                 }
-
                 //Generar array de recompensas
                 Material[] arrayRecompensas = new Material[]{Material.BLAZE_ROD,Material.ENDER_PEARL,Material.NETHER_WART,Material.POTION,Material.EMERALD,Material.GOLD_INGOT,Material.EXPERIENCE_BOTTLE,Material.IRON_INGOT};
                 int recompensaRandom = new Random().nextInt(arrayRecompensas.length);
