@@ -73,7 +73,12 @@ public class VillagerEvents implements Listener {
                     ItemStack objetoMisionAEliminar = new ItemStack(misionAsignada.getMaterial(), misionAsignada.getCantidadTotal());
                     event.getPlayer().getInventory().removeItem(objetoMisionAEliminar);
                 }
-                villager.getWorld().dropItemNaturally(villager.getLocation(), new ItemStack(Material.STICK, 1));
+
+                //Generar array de recompensas
+                Material[] arrayRecompensas = new Material[]{Material.BLAZE_ROD,Material.ENDER_PEARL,Material.NETHER_WART,Material.POTION,Material.EMERALD,Material.GOLD_INGOT,Material.EXPERIENCE_BOTTLE,Material.IRON_INGOT};
+                int recompensaRandom = new Random().nextInt(arrayRecompensas.length);
+
+                villager.getWorld().dropItemNaturally(villager.getLocation(), new ItemStack(arrayRecompensas[recompensaRandom], 1));
                 villager.setGlowing(false);
                 misionAsignada = null;
             }
