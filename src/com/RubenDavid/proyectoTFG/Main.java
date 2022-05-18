@@ -32,15 +32,10 @@ public class Main extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new VillagerEvents(conexion), this);
 
-        //registerCommands();
-
+        //Actua cuando se ejecuta en comando /mision
+        getCommand("mision").setExecutor(new Comando(this));
     }
 
-
-
-    /*public void registerCommands(){
-    this.getCommand("mision").setExecutor(new Comando(this));
-    }*/
 
     public Connection getMySQL(){
         return this.conexion.getConnection();

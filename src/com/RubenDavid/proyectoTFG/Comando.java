@@ -13,13 +13,15 @@ public class Comando implements CommandExecutor {
         this.plugin=plugin;
     }
 
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+    @Override
+    public boolean onCommand(CommandSender comandsender, Command command, String label, String[] args) {
+        if (!(comandsender instanceof Player)) {
             return true;
         }
-        Player jugador = (Player) sender;
-        int misiones = SQLPlayerData.getMision(plugin.getMySQL(), jugador.getUniqueId());
-        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&',"&aActualmente tienes asignada la mision: &7"+misiones));
+        Player jugador = (Player) comandsender;
+        //Coge la mision asignada del jugador que ha escrito el comando
+        String misiones = SQLPlayerData.getMision(plugin.getMySQL(), jugador.getUniqueId());
+        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&',"&aMision asignada: &7"+misiones));
 
         return true;
     }

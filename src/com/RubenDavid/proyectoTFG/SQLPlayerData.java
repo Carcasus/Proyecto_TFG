@@ -79,7 +79,6 @@ public class SQLPlayerData {
         }
 
 
-
     }
 
     public static void actualizarMisionAsignada(Connection connection, String nombre, MisionAsignada misionAsignada) {
@@ -106,27 +105,20 @@ public class SQLPlayerData {
         }
     }
 
-    /*DESARROLLAR EN UN FUTURO PARA LA CLASE Comando*/
-    public static int getMision(Connection connection, UUID uuid) {
+    //Metodo utilizado para el comando mision
+    public static String getMision(Connection connection, UUID uuid) {
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM jugador WHERE (uuid=?)");
+            PreparedStatement statement = connection.prepareStatement("SELECT descripcion FROM mision_activa WHERE (uuid_jugador=?)");
             statement.setString(1, uuid.toString());
             ResultSet resultado = statement.executeQuery();
 
-            if (resultado.next()) {
-                int mision = resultado.getInt("Mision");
+            if (resultado.next() && resultado.getString("descripcion") !="") {
+                String mision = resultado.getString("descripcion");
                 return mision;
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        return 0;
+        return "No tienes asignada ninguna mision";
     }
-
-
-
-
-
-
-
 }
