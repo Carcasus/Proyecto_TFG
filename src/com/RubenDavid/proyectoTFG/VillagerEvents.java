@@ -63,6 +63,11 @@ public class VillagerEvents implements Listener {
 
         //Generar una recompensa
         if (misionAsignada.getCantidadActual() == misionAsignada.getCantidadTotal()){
+            //Reseteamos la mision asignada a valores predeterminados
+            SQLPlayerData.resetMisionAsignada(conexion.getConnection(), misionAsignada);
+            //Sumamos 1 mision al total de misiones
+            SQLPlayerData.sumarMision(conexion.getConnection(), misionAsignada);
+
             //Si el aldeano clickado y el aldeano de la mision son el mismo, damos la recompensa y liberamos la opcion de coger una nueva mision
             if (event.getRightClicked().getUniqueId() == misionAsignada.getVillager()){
                 event.getPlayer().sendMessage("Muchas gracias, " + event.getPlayer().getDisplayName() + ", aqui esta tu recompensa ");

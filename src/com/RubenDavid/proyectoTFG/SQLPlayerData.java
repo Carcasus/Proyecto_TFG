@@ -13,6 +13,7 @@ public class SQLPlayerData {
 
     public static boolean jugadorExiste(Connection connection, UUID uuid) {
         try {
+
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM jugador WHERE (uuid=?)");
             statement.setString(1, uuid.toString());
             ResultSet resultado = statement.executeQuery();
@@ -20,7 +21,7 @@ public class SQLPlayerData {
             if (resultado.next()) {
                 return true;
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -29,26 +30,26 @@ public class SQLPlayerData {
 
     public static void crearJugador(Connection connection, UUID uuid, String nombre) {
         try {
-            if (!jugadorExiste(connection,uuid)) {
+            if (!jugadorExiste(connection, uuid)) {
                 PreparedStatement statement = connection.prepareStatement("INSERT INTO jugador VALUE (?,?,?)");
                 statement.setString(1, uuid.toString());
                 statement.setString(2, nombre);
                 statement.setInt(3, 0); //Mision
                 statement.executeUpdate();
-                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static void crearMisionAsignada(Connection connection, String nombre, MisionAsignada misionAsignada){
+    public static void crearMisionAsignada(Connection connection, String nombre, MisionAsignada misionAsignada) {
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM mision_activa WHERE (uuid_jugador=?)");
             statement.setString(1, misionAsignada.getPlayer().toString());
             ResultSet resultado = statement.executeQuery();
 
             if (resultado.next()) {
-                actualizarMisionAsignada(connection, nombre, misionAsignada);
+                actualizarMisionAsignada(connection, misionAsignada);
             } else {
                 int id = misionAsignada.getId();
                 String descripcion = misionAsignada.getDescripcion();
@@ -74,19 +75,21 @@ public class SQLPlayerData {
                     e.printStackTrace();
                 }
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
 
     }
 
-    public static void actualizarMisionAsignada(Connection connection, String nombre, MisionAsignada misionAsignada) {
+    public static void actualizarMisionAsignada(Connection connection, MisionAsignada misionAsignada) {
 
         String descripcion = misionAsignada.getDescripcion();
         int cantidadTotal = misionAsignada.getCantidadTotal();
         String nombreVillager = misionAsignada.getNombreVillager();
         int cantidadActual = misionAsignada.getCantidadActual();
+
+
 
         try {
             PreparedStatement statement = connection.prepareStatement("UPDATE mision_activa SET descripcion=?, cantidad_total=?, uuid_aldeano=?, " +
@@ -100,10 +103,56 @@ public class SQLPlayerData {
 
             statement.executeUpdate();
 
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+
+//Reinicia los parametros de mision asignada en la base de datos
+    public static void resetMisionAsignada(Connection connection, MisionAsignada misionAsignada) {
+
+        try {
+            PreparedStatement statement = connection.prepareStatement("UPDATE mision_activa SET id=?, descripcion=?, cantidad_total=?, uuid_aldeano=?, " +
+                    "nombre_aldeano=?, cantidad_actual=? WHERE (uuid_jugador=?)");
+            statement.setInt(1,0);
+            statement.setString(2, "");
+            statement.setInt(3, 0);
+            statement.setString(4, "");
+            statement.setString(5, "");
+            statement.setInt(6, 0);
+            statement.setString(7, misionAsignada.getPlayer().toString());
+
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Suma una mision a mision total en la base de datos
+    public static void sumarMision(Connection connection, MisionAsignada misionAsignada) {
+        int numMision = 0;
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT Mision FROM jugador WHERE (uuid=?)");
+            statement.setString(1, misionAsignada.getPlayer().toString());
+            ResultSet resultado = statement.executeQuery();
+            if (resultado.next()) {
+                numMision = resultado.getInt("mision");
+            }
+
+            int suma= numMision +1;
+            statement = connection.prepareStatement("UPDATE jugador SET Mision=? WHERE (uuid=?)");
+            statement.setInt(1, suma);
+            statement.setString(2, misionAsignada.getPlayer().toString());
+            statement.executeUpdate();
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     //Metodo utilizado para el comando mision
     public static String getMision(Connection connection, UUID uuid) {
@@ -112,9 +161,11 @@ public class SQLPlayerData {
             statement.setString(1, uuid.toString());
             ResultSet resultado = statement.executeQuery();
 
-            if (resultado.next() && resultado.getString("descripcion") !="") {
+            if (resultado.next() && resultado.getString("descripcion") != "") {
                 String mision = resultado.getString("descripcion");
                 return mision;
+            }else{
+                return "No tienes asignada ninguna mision";
             }
         } catch (SQLException e) {
             e.printStackTrace();
