@@ -108,33 +108,11 @@ public class SQLPlayerData {
         }
     }
 
-
-//Reinicia los parametros de mision asignada en la base de datos
-    public static void resetMisionAsignada(Connection connection, MisionAsignada misionAsignada) {
-
-        try {
-            PreparedStatement statement = connection.prepareStatement("UPDATE mision_activa SET id=?, descripcion=?, cantidad_total=?, uuid_aldeano=?, " +
-                    "nombre_aldeano=?, cantidad_actual=? WHERE (uuid_jugador=?)");
-            statement.setInt(1,0);
-            statement.setString(2, "");
-            statement.setInt(3, 0);
-            statement.setString(4, "");
-            statement.setString(5, "");
-            statement.setInt(6, 0);
-            statement.setString(7, misionAsignada.getPlayer().toString());
-
-            statement.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     //Suma una mision a mision total en la base de datos
     public static void sumarMision(Connection connection, MisionAsignada misionAsignada) {
         int numMision = 0;
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT Mision FROM jugador WHERE (uuid=?)");
+            PreparedStatement statement = connection.prepareStatement("SELECT mision FROM jugador WHERE (uuid=?)");
             statement.setString(1, misionAsignada.getPlayer().toString());
             ResultSet resultado = statement.executeQuery();
             if (resultado.next()) {
