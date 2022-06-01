@@ -23,7 +23,7 @@ public class Main extends JavaPlugin implements Listener {
 
         //Creacion de las plantillas de misiones
         DatosCompartidos.plantillas.add(new MisionPlantilla(0, "Nuestro botanico necesita materiales, recoge tres margaritas", Material.OXEYE_DAISY, null, 3));
-        DatosCompartidos.plantillas.add(new MisionPlantilla(1, "La poblacion va en aumento, tala un arbol para poder hacer una cabaña", Material.OAK_LOG, null, 3));
+        DatosCompartidos.plantillas.add(new MisionPlantilla(1, "La poblacion va en aumento, tala un roble para poder hacer una cabaña", Material.OAK_LOG, null, 3));
         DatosCompartidos.plantillas.add(new MisionPlantilla(2, "Necesitamos mas artesanos, fabrica una mesa de trabajo", Material.CRAFTING_TABLE, null, 1));
         DatosCompartidos.plantillas.add(new MisionPlantilla(3, "Necesitamos alimento, sacrifica a un pollo", null, EntityType.CHICKEN, 1));
 

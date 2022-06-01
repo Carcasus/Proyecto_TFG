@@ -1,8 +1,5 @@
 package com.RubenDavid.proyectoTFG;
 
-import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
-
 import java.util.UUID;
 
 
