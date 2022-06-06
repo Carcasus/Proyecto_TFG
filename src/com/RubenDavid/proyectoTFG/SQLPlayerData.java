@@ -29,7 +29,7 @@ public class SQLPlayerData {
     public static void crearJugador(Connection connection, UUID uuid, String nombre) {
         try {
             if (!jugadorExiste(connection, uuid)) {
-                PreparedStatement statement = connection.prepareStatement("INSERT INTO jugador VALUE (?,?,?)");
+                PreparedStatement statement = connection.prepareStatement("INSERT INTO jugador VALUES (?,?,?)");
                 statement.setString(1, uuid.toString());
                 statement.setString(2, nombre);
                 statement.setInt(3, 0); //Mision
@@ -57,7 +57,7 @@ public class SQLPlayerData {
 
 
                 try {
-                    statement = connection.prepareStatement("INSERT INTO mision_activa VALUE (?,?,?,?,?,?,?,?)");
+                    statement = connection.prepareStatement("INSERT INTO mision_activa VALUES (?,?,?,?,?,?,?,?)");
                     statement.setInt(1, id);
                     statement.setString(2, descripcion);
                     statement.setInt(3, cantidadTotal);

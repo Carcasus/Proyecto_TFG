@@ -20,7 +20,7 @@ public class Comando implements CommandExecutor {
         }
         Player jugador = (Player) comandsender;
         //Coge la mision asignada del jugador que ha escrito el comando
-        String misiones = SQLPlayerData.getMision(plugin.getMySQL(), jugador.getUniqueId());
+        String misiones = SQLPlayerData.getMision(plugin.getSqliteConnection(), jugador.getUniqueId());
         jugador.sendMessage(ChatColor.translateAlternateColorCodes('&',"&aMision asignada: &7"+misiones));
 
         return true;

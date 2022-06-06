@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,16 +28,16 @@ public class VillagerEvents implements Listener {
     ArrayList<MisionAsignada> listaDeMisionesAsignadas = new ArrayList<>();
     MisionPlantilla misionAleatoria;
 
-    private ConexionMySQL conexion;
+    private Connection conexion;
 
-    public VillagerEvents(ConexionMySQL conexion) {
+    public VillagerEvents(Connection conexion) {
         this.conexion = conexion;
     }
 
     @EventHandler
     public void CrearMisiones(PlayerInteractAtEntityEvent event) throws SQLException {
 
-        PreparedStatement statement = conexion.getConnection().prepareStatement("SELECT * FROM mision_activa WHERE (uuid_jugador=?)");
+        PreparedStatement statement = conexion.prepareStatement("SELECT * FROM mision_activa WHERE (uuid_jugador=?)");
         statement.setString(1, event.getPlayer().getUniqueId().toString());
         ResultSet resultado = statement.executeQuery();
 
@@ -67,7 +68,7 @@ public class VillagerEvents implements Listener {
                 if (listaDeMisionesAsignadas.get(i).getPlayer().equals(event.getPlayer().getUniqueId())) {
 
                     event.getPlayer().sendMessage(listaDeMisionesAsignadas.get(i).getDescripcion());
-                    SQLPlayerData.crearMisionAsignada(conexion.getConnection(), event.getPlayer().getName(), listaDeMisionesAsignadas.get(i));
+                    SQLPlayerData.crearMisionAsignada(conexion, event.getPlayer().getName(), listaDeMisionesAsignadas.get(i));
 
                     villager.setGlowing(true); //Ponemos el marcado al aldeano
 
@@ -100,14 +101,14 @@ public class VillagerEvents implements Listener {
                             Material.POTION, Material.EMERALD, Material.GOLD_INGOT, Material.EXPERIENCE_BOTTLE, Material.IRON_INGOT};
                     int recompensaRandom = new Random().nextInt(arrayRecompensas.length);
 
-                    SQLPlayerData.sumarMision(conexion.getConnection(), listaDeMisionesAsignadas.get(i));
+                    SQLPlayerData.sumarMision(conexion, listaDeMisionesAsignadas.get(i));
 
                     villager.getWorld().dropItemNaturally(villager.getLocation(), new ItemStack(arrayRecompensas[recompensaRandom], 1));
                     villager.setGlowing(false);
                     listaDeMisionesAsignadas.remove(i); //retiramos del array la fila actual
 
                     Bukkit.broadcastMessage("Linea del jugador "+ event.getPlayer().getUniqueId() + " borrada");
-                    statement = conexion.getConnection().prepareStatement("DELETE FROM mision_activa WHERE (uuid_jugador=?)");
+                    statement = conexion.prepareStatement("DELETE FROM mision_activa WHERE (uuid_jugador=?)");
                     statement.setString(1, event.getPlayer().getUniqueId().toString());
                     statement.executeUpdate();
                 }
@@ -199,6 +200,9 @@ public class VillagerEvents implements Listener {
         for (int i = 0; i < listaDeMisionesAsignadas.size(); i++) {
             switch (listaDeMisionesAsignadas.get(i).getId()) {
                 case 3:
+                    if (!(event.getEntity() instanceof Chicken)) {
+                        return;
+                    }
                     Chicken chicken = (Chicken) event.getEntity();
                     Player asesino = chicken.getKiller();
 
