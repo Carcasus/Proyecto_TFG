@@ -32,7 +32,7 @@ public class SQLPlayerData {
                 PreparedStatement statement = connection.prepareStatement("INSERT INTO jugador VALUES (?,?,?)");
                 statement.setString(1, uuid.toString());
                 statement.setString(2, nombre);
-                statement.setInt(3, 0); //Mision
+                statement.setInt(3, 0); //Misiones totales completadas
                 statement.executeUpdate();
             }
         } catch (SQLException e) {

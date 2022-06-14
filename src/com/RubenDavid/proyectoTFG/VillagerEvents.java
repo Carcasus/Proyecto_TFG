@@ -44,7 +44,6 @@ public class VillagerEvents implements Listener {
         Entity villager = event.getRightClicked();
 
         if (!(villager instanceof Villager)) { //Si no hacemos click sobre un villager, salimos del metodo
-
             return;
         }
         if (event.getPlayer().isSneaking()) { //Si estamos agachados, salimos del metodo
@@ -72,7 +71,6 @@ public class VillagerEvents implements Listener {
 
                     villager.setGlowing(true); //Ponemos el marcado al aldeano
 
-                    event.getPlayer().sendMessage("Ultima mision asignada: " + listaDeMisionesAsignadas.get(i).getId() + ".");
                 }
             }
         }
@@ -107,7 +105,6 @@ public class VillagerEvents implements Listener {
                     villager.setGlowing(false);
                     listaDeMisionesAsignadas.remove(i); //retiramos del array la fila actual
 
-                    Bukkit.broadcastMessage("Linea del jugador "+ event.getPlayer().getUniqueId() + " borrada");
                     statement = conexion.prepareStatement("DELETE FROM mision_activa WHERE (uuid_jugador=?)");
                     statement.setString(1, event.getPlayer().getUniqueId().toString());
                     statement.executeUpdate();

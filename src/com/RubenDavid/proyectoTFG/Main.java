@@ -29,7 +29,6 @@ public class Main extends JavaPlugin implements Listener {
         DatosCompartidos.plantillas.add(new MisionPlantilla(1, "La poblacion va en aumento, tala un roble para poder hacer una cabaña", Material.OAK_LOG, null, 3));
         DatosCompartidos.plantillas.add(new MisionPlantilla(2, "Necesitamos mas artesanos, fabrica una mesa de trabajo", Material.CRAFTING_TABLE, null, 1));
         DatosCompartidos.plantillas.add(new MisionPlantilla(3, "Necesitamos alimento, sacrifica a un pollo", null, EntityType.CHICKEN, 1));
-
         try {
             this.conexion = DriverManager.getConnection("jdbc:sqlite:plugins/villagererrands.db");
             iniciarBaseDatos();
@@ -75,10 +74,12 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onPlayerJoinEvent(PlayerJoinEvent event) {
-        Player jugador = event.getPlayer();
-        Bukkit.broadcastMessage("Hola " + event.getPlayer().getDisplayName());
-        if(!SQLPlayerData.jugadorExiste(getSqliteConnection(),jugador.getUniqueId())) {
+    public void onPlayerJoinEvent(PlayerJoinEvent event) { // <- Llamamos al evento "playerJoinEvent = event"
+        Player jugador = event.getPlayer(); // <- Guardamos en la variable jugador, al jugador que ha provocado el evento
+        Bukkit.broadcastMessage("Hola " + event.getPlayer().getDisplayName()); // <- Mensaje de saludo por chat, mostrando el nombre del jugador
+        if(!SQLPlayerData.jugadorExiste(getSqliteConnection(),jugador.getUniqueId())) { // <- Si el jugador no existe en la base de datos SQLite,
+                                                                                        // creamos una fila nueva con sus datos
+                                                                                        // En la tabla jugador
             SQLPlayerData.crearJugador(getSqliteConnection(), jugador.getUniqueId(), jugador.getName());
         }
     }
